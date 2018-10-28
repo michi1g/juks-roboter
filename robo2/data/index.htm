@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html>
+<style>
+
+input[type="text"]{
+  width: 90%;
+  height: 3vh;
+}
+
+input[type="button"]{
+  width: 9%;
+  height: 3.6vh;
+}
+
+.rxd{
+  height: 30vh;
+}
+
+textarea {
+  width: 99%;
+  height: 100%;
+  resize: none;
+}
+.steuerung {
+  margin-left:30%;
+}
+
+</style>
+
+<script>
+var msg = "vor";
+var Socket;
+function start() {
+  Socket = new WebSocket('ws://' + window.location.hostname + ':81/');
+  var vor = document.getElementById("vor");
+  vor.addEventListener('touchstart', Mvorwaerts);
+  vor.addEventListener('touchend', Mstop);
+  vor.addEventListener('mousedown', Mvorwaerts);
+  vor.addEventListener('mouseup', Mstop);
+  var zurueck = document.getElementById("zurueck");
+  zurueck.addEventListener('touchstart', Mzurueck);
+  zurueck.addEventListener('touchend', Mstop);
+  zurueck.addEventListener('mousedown', Mzurueck);
+  zurueck.addEventListener('mouseup', Mstop);
+  var links = document.getElementById("links");
+  links.addEventListener('touchstart', Mlinks);
+  links.addEventListener('touchend', Mstop);
+  links.addEventListener('mousedown', Mlinks);
+  links.addEventListener('mouseup', Mstop);
+  var rechts = document.getElementById("rechts");
+  rechts.addEventListener('touchstart', Mrechts);
+  rechts.addEventListener('touchend', Mstop);
+  rechts.addEventListener('mousedown', Mrechts);
+  rechts.addEventListener('mouseup', Mstop);
+  Socket.onmessage = function(evt) {
+	document.getElementById("rxConsole").value += evt.data + "\n";
+	document.getElementById("rxConsole").scrollTop = document.getElementById("rxConsole").scrollHeight 
+
+  }
+  
+}
+
+function Mvorwaerts() {
+	//alert ('Event-Handler wurden hinzugefügt!');
+	console.log("vor");
+	console.log(JSON.stringify(msg));
+	Socket.send("vor");
+}
+function Mrechts() {
+	//alert ('Event-Handler wurden hinzugefügt!');
+	console.log("rechts");
+	Socket.send("rechts");
+}
+function Mlinks() {
+	//alert ('Event-Handler wurden hinzugefügt!');
+	console.log("links");
+	Socket.send("links");
+}
+function Mzurueck() {
+	//alert ('Event-Handler wurden hinzugefügt!');
+	console.log("zurueck");
+	Socket.send("zurueck");
+}
+function Mstop() {
+	//alert ('Event-Handler wurden hinzugefügt!');
+	console.log("stop");
+	Socket.send("stop");
+}
+
+	
+</script>
+
+<body onload="javascript:start();">
+<div class="steuerung">
+  <div>
+    <input class="txd" type="button" id="vor" style="margin-left: 9%;" value="Vor">
+  </div>
+  <div>
+    <input class="txd" type="button" id="links" value ="Links">
+    <input class="txd" type="button" id="zurueck" value ="Zur&uuml;ck">
+    <input class="txd" type="button" id="rechts" value ="Rechts">
+  </div>
+</div>
+  <br>
+  <div class="rxd">
+    <textarea id="rxConsole" readonly></textarea>
+  </div>
+</body>
+</html>
